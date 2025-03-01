@@ -23,29 +23,8 @@ def get_type(animal):
     return animal["characteristics"]["type"] if "type" in animal["characteristics"] else False
 
 
-def create_text_with_relevant_information(animals):
-    text = ""
-    for animal in animals:
-        name = get_name(animal)
-        diet = get_diet(animal)
-        first_location = get_locations(animal)[0]
-        type_ = get_type(animal)
-
-        text += '<li class="cards__item">\n'
-        if bool(name):
-            text += (f"Name: {name}<br/>\n")
-        if bool(diet):
-            text += (f"Diet: {diet}<br/>\n")
-        if bool(first_location):
-            text += (f"Location: {first_location}<br/>\n")
-        if bool(type_):
-            text += (f"Type: {type_}<br/>\n")
-        text += '</li>\n'
-    return text
-
-
 def load_html(file_path):
-    """ Loads a HTML file """
+    """ Loads an HTML file """
     with open(file_path, "r") as handle:
         return handle.read()
 
@@ -54,12 +33,36 @@ def save_document(new_file_name, file):
     with open(new_file_name, "w") as doc:
         doc.write(file)
 
+
+def create_html_content(animals):
+    content = ""
+    for animal in animals:
+        name = get_name(animal)
+        diet = get_diet(animal)
+        locations = ", ".join(get_locations(animal))
+        type_ = get_type(animal)
+
+        content += '<li class="cards__item">\n'
+        content += f'<div class="card__title">{name}</div>\n'
+        content += '<p class="card__text">\n'
+        if bool(diet):
+            content += f"<strong>Diet:</strong> {diet}<br/>\n"
+        if bool(locations):
+            content += f"<strong>Location:</strong> {locations}<br/>\n"
+        if bool(type_):
+            content += f"<strong>Type:</strong> {type_}<br/>\n"
+        content += '</p>\n'
+        content += '</li>\n'
+
+    return content
+
+
 def main():
     animals_data = load_data('animals_data.json')
 
     animals_template = load_html("animals_template.html")
 
-    new_animals_template = animals_template.replace("__REPLACE_ANIMALS_INFO__", create_text_with_relevant_information(animals_data))
+    new_animals_template = animals_template.replace("__REPLACE_ANIMALS_INFO__", create_html_content(animals_data))
 
     save_document("animals.html", new_animals_template)
 
