@@ -2,68 +2,148 @@ import json
 
 
 def load_data(file_path):
-  """ Loads a JSON file """
-  with open(file_path, "r") as handle:
-    return json.load(handle)
+    """
+    Load data from a JSON file.
+
+    Args:
+        file_path (str): The path to the JSON file.
+
+    Returns:
+        dict: The parsed JSON data.
+    """
+    with open(file_path, "r", encoding="utf-8") as handle:
+        return json.load(handle)
 
 
 def get_name(animal):
+    """
+    Get the name of the animal.
+
+    Args:
+        animal (dict): Dictionary containing animal data.
+
+    Returns:
+        str: The name of the animal.
+    """
     return animal["name"]
 
 
 def get_diet(animal):
-    return animal["characteristics"]["diet"] if "diet" in animal["characteristics"] else False
+    """
+    Get the diet of the animal if available.
+
+    Args:
+        animal (dict): Dictionary containing animal data.
+
+    Returns:
+        str | bool: The diet of the animal if available, else False.
+    """
+    return animal["characteristics"].get("diet", False)
 
 
 def get_locations(animal):
+    """
+    Get the locations where the animal is found.
+
+    Args:
+        animal (dict): Dictionary containing animal data.
+
+    Returns:
+        list: List of locations.
+    """
     return animal["locations"]
 
 
 def get_type(animal):
-    return animal["characteristics"]["type"] if "type" in animal["characteristics"] else False
+    """
+    Get the type of the animal if available.
+
+    Args:
+        animal (dict): Dictionary containing animal data.
+
+    Returns:
+        str | bool: The type of the animal if available, else False.
+    """
+    return animal["characteristics"].get("type", False)
 
 
 def load_html(file_path):
-    """ Loads an HTML file """
-    with open(file_path, "r") as handle:
+    """
+    Load an HTML file as a string.
+
+    Args:
+        file_path (str): The path to the HTML file.
+
+    Returns:
+        str: The content of the HTML file.
+    """
+    with open(file_path, "r", encoding="utf-8") as handle:
         return handle.read()
 
 
-def save_document(new_file_name, file):
-    with open(new_file_name, "w") as doc:
-        doc.write(file)
+def save_document(new_file_name, file_content):
+    """
+    Save content to a new file.
+
+    Args:
+        new_file_name (str): The name of the file to be created.
+        file_content (str): The content to write into the file.
+    """
+    with open(new_file_name, "w", encoding="utf-8") as doc:
+        doc.write(file_content)
+
+
+def serialize_animal(animal_obj):
+    """
+    Convert an animal dictionary to an HTML list item.
+
+    Args:
+        animal_obj (dict): Dictionary containing animal data.
+
+    Returns:
+        str: HTML representation of the animal data.
+    """
+    animal_content = ""
+    name = get_name(animal_obj)
+    diet = get_diet(animal_obj)
+    locations = ", ".join(get_locations(animal_obj))
+    type_ = get_type(animal_obj)
+
+    animal_content += '<li class="cards__item">\n'
+    animal_content += f'<div class="card__title">{name}</div>\n'
+    animal_content += '<p class="card__text">\n'
+    if diet:
+        animal_content += f"<strong>Diet:</strong> {diet}<br/>\n"
+    animal_content += f"<strong>Location:</strong> {locations}<br/>\n"
+    if type_:
+        animal_content += f"<strong>Type:</strong> {type_}<br/>\n"
+    animal_content += '</p>\n'
+    animal_content += '</li>\n'
+
+    return animal_content
 
 
 def create_html_content(animals):
-    content = ""
-    for animal in animals:
-        name = get_name(animal)
-        diet = get_diet(animal)
-        locations = ", ".join(get_locations(animal))
-        type_ = get_type(animal)
+    """
+    Generate HTML content from a list of animal dictionaries.
 
-        content += '<li class="cards__item">\n'
-        content += f'<div class="card__title">{name}</div>\n'
-        content += '<p class="card__text">\n'
-        if bool(diet):
-            content += f"<strong>Diet:</strong> {diet}<br/>\n"
-        if bool(locations):
-            content += f"<strong>Location:</strong> {locations}<br/>\n"
-        if bool(type_):
-            content += f"<strong>Type:</strong> {type_}<br/>\n"
-        content += '</p>\n'
-        content += '</li>\n'
+    Args:
+        animals (list): List of animal dictionaries.
 
-    return content
+    Returns:
+        str: HTML representation of all animals.
+    """
+    return "".join(serialize_animal(animal) for animal in animals)
 
 
 def main():
-    animals_data = load_data('animals_data.json')
-
+    """
+    Main function to load data, generate HTML content, and save the final document.
+    """
+    animals_data = load_data("animals_data.json")
     animals_template = load_html("animals_template.html")
-
-    new_animals_template = animals_template.replace("__REPLACE_ANIMALS_INFO__", create_html_content(animals_data))
-
+    html_content = create_html_content(animals_data)
+    new_animals_template = animals_template.replace("__REPLACE_ANIMALS_INFO__", html_content)
     save_document("animals.html", new_animals_template)
 
 
