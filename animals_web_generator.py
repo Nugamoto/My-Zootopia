@@ -30,15 +30,17 @@ def create_text_with_relevant_information(animals):
         diet = get_diet(animal)
         first_location = get_locations(animal)[0]
         type_ = get_type(animal)
+
+        text += '<li class="cards__item">\n'
         if bool(name):
-            text += (f"Name: {name}\n")
+            text += (f"Name: {name}<br/>\n")
         if bool(diet):
-            text += (f"Diet: {diet}\n")
+            text += (f"Diet: {diet}<br/>\n")
         if bool(first_location):
-            text += (f"Location: {first_location}\n")
+            text += (f"Location: {first_location}<br/>\n")
         if bool(type_):
-            text += (f"Type: {type_}\n")
-        text += "\n"
+            text += (f"Type: {type_}<br/>\n")
+        text += '</li>\n'
     return text
 
 
