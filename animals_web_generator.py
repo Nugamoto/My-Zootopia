@@ -163,21 +163,23 @@ def serialize_animal(animal_obj):
 
     animal_content += '<li class="cards__item">\n'
     animal_content += f'<div class="card__title">{name}</div>\n'
-    animal_content += '<p class="card__text">\n'
+    animal_content += '<div class="card__text">\n'
+    animal_content += '<ul>\n'
+    animal_content += f"<li><strong>Location:</strong> {locations}</li>\n"
     if diet:
-        animal_content += f"<strong>Diet:</strong> {diet}<br/>\n"
-    animal_content += f"<strong>Location:</strong> {locations}<br/>\n"
+        animal_content += f"<li><strong>Diet:</strong> {diet}</li>\n"
     if type_:
-        animal_content += f"<strong>Type:</strong> {type_}<br/>\n"
+        animal_content += f"<li><strong>Type:</strong> {type_}</li>\n"
     if skin_type:
-        animal_content += f"<strong>Skin type:</strong> {skin_type}<br/>\n"
+        animal_content += f"<li><strong>Skin type:</strong> {skin_type}</li>\n"
     if lifespan:
-        animal_content += f"<strong>Lifespan:</strong> {lifespan}<br/>\n"
+        animal_content += f"<li><strong>Lifespan:</strong> {lifespan}</li>\n"
     if color:
-        animal_content += f"<strong>Color:</strong> {color}<br/>\n"
+        animal_content += f"<li><strong>Color:</strong> {color}</li>\n"
     if predators:
-        animal_content += f"<strong>Predators:</strong> {predators}<br/>\n"
-    animal_content += '</p>\n'
+        animal_content += f"<li><strong>Predators:</strong> {predators}</li>\n"
+    animal_content += '</ul>\n'
+    animal_content += '</div>\n'
     animal_content += '</li>\n'
 
     return animal_content
