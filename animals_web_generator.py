@@ -67,6 +67,54 @@ def get_type(animal):
     return animal["characteristics"].get("type", False)
 
 
+def get_skin_type(animal):
+    """Retrieve the skin type of the given animal.
+
+    Args:
+        animal (dict): A dictionary containing animal characteristics.
+
+    Returns:
+        str | bool: The skin type of the animal if available, otherwise False.
+    """
+    return animal["characteristics"].get("skin_type", False)
+
+
+def get_lifespan(animal):
+    """Retrieve the lifespan of the given animal.
+
+    Args:
+        animal (dict): A dictionary containing animal characteristics.
+
+    Returns:
+        str | bool: The lifespan of the animal if available, otherwise False.
+    """
+    return animal["characteristics"].get("lifespan", False)
+
+
+def get_color(animal):
+    """Retrieve the color of the given animal.
+
+    Args:
+        animal (dict): A dictionary containing animal characteristics.
+
+    Returns:
+        str | bool: The color of the animal if available, otherwise False.
+    """
+    return animal["characteristics"].get("color", False)
+
+
+def get_predators(animal):
+    """Retrieve the predators of the given animal.
+
+    Args:
+        animal (dict): A dictionary containing animal characteristics.
+
+    Returns:
+        list | bool: A list of predators if available, otherwise False.
+    """
+    return animal["characteristics"].get("predators", False)
+
+
 def load_html(file_path):
     """
     Load an HTML file as a string.
@@ -108,6 +156,10 @@ def serialize_animal(animal_obj):
     diet = get_diet(animal_obj)
     locations = ", ".join(get_locations(animal_obj))
     type_ = get_type(animal_obj)
+    skin_type = get_skin_type(animal_obj)
+    lifespan = get_lifespan(animal_obj)
+    color = get_color(animal_obj)
+    predators = get_predators(animal_obj)
 
     animal_content += '<li class="cards__item">\n'
     animal_content += f'<div class="card__title">{name}</div>\n'
@@ -117,6 +169,14 @@ def serialize_animal(animal_obj):
     animal_content += f"<strong>Location:</strong> {locations}<br/>\n"
     if type_:
         animal_content += f"<strong>Type:</strong> {type_}<br/>\n"
+    if skin_type:
+        animal_content += f"<strong>Skin type:</strong> {skin_type}<br/>\n"
+    if lifespan:
+        animal_content += f"<strong>Lifespan:</strong> {lifespan}<br/>\n"
+    if color:
+        animal_content += f"<strong>Color:</strong> {color}<br/>\n"
+    if predators:
+        animal_content += f"<strong>Predators:</strong> {predators}<br/>\n"
     animal_content += '</p>\n'
     animal_content += '</li>\n'
 
