@@ -1,7 +1,7 @@
 import json
 
 
-def load_data(file_path):
+def load_json_file(file_path):
     """
     Load data from a JSON file with error handling.
 
@@ -16,6 +16,7 @@ def load_data(file_path):
     """
     try:
         with open(file_path, "r", encoding="utf-8") as handle:
+            print(f"✅ json_document '{file_path}' loaded successfully!")
             return json.load(handle)
     except FileNotFoundError:
         print(f"Error: The file '{file_path}' was not found.")
@@ -28,6 +29,51 @@ def load_data(file_path):
         print(f"Unexpected error: {e}")
 
     return None
+
+
+def load_html_file(file_path):
+    """
+    Load an HTML file as a string with error handling.
+
+    Args:
+        file_path (str): The path to the HTML file.
+
+    Returns:
+        str: The content of the HTML file if successful, otherwise None.
+
+    Raises:
+        ValueError: If the file is empty.
+    """
+    try:
+        with open(file_path, "r", encoding="utf-8") as handle:
+            content = handle.read()
+            if not content.strip():
+                raise ValueError(f"Error: The file '{file_path}' is empty.")
+            print(f"✅ HTML_document '{file_path}' loaded successfully!")
+            return content
+    except FileNotFoundError:
+        print(f"Error: The file '{file_path}' was not found.")
+    except PermissionError:
+        print(f"Error: Permission denied when accessing '{file_path}'.")
+    except UnicodeDecodeError:
+        print(f"Error: Failed to decode '{file_path}'. Check the file encoding.")
+    except Exception as e:
+        print(f"Unexpected error: {e}")
+
+    return None
+
+
+def save_document(new_file_name, file_content):
+    """
+    Save content to a new file.
+
+    Args:
+        new_file_name (str): The name of the file to be created.
+        file_content (str): The content to write into the file.
+    """
+    with open(new_file_name, "w", encoding="utf-8") as doc:
+        doc.write(file_content)
+    print(f"✅ Document '{new_file_name}' saved successfully!")
 
 
 def get_name(animal):
@@ -130,49 +176,6 @@ def get_predators(animal):
     return animal.get("characteristics", {}).get("predators", False)
 
 
-def load_html(file_path):
-    """
-    Load an HTML file as a string with error handling.
-
-    Args:
-        file_path (str): The path to the HTML file.
-
-    Returns:
-        str: The content of the HTML file if successful, otherwise None.
-
-    Raises:
-        ValueError: If the file is empty.
-    """
-    try:
-        with open(file_path, "r", encoding="utf-8") as handle:
-            content = handle.read()
-            if not content.strip():
-                raise ValueError(f"Error: The file '{file_path}' is empty.")
-            return content
-    except FileNotFoundError:
-        print(f"Error: The file '{file_path}' was not found.")
-    except PermissionError:
-        print(f"Error: Permission denied when accessing '{file_path}'.")
-    except UnicodeDecodeError:
-        print(f"Error: Failed to decode '{file_path}'. Check the file encoding.")
-    except Exception as e:
-        print(f"Unexpected error: {e}")
-
-    return None
-
-
-def save_document(new_file_name, file_content):
-    """
-    Save content to a new file.
-
-    Args:
-        new_file_name (str): The name of the file to be created.
-        file_content (str): The content to write into the file.
-    """
-    with open(new_file_name, "w", encoding="utf-8") as doc:
-        doc.write(file_content)
-
-
 def serialize_animal(animal_obj):
     """
     Convert an animal dictionary to an HTML list item.
@@ -234,11 +237,13 @@ def main():
     """
     Main function to load data, generate HTML content, and save the final document.
     """
-    animals_data = load_data("animals_data.json")
-    animals_template = load_html("animals_template.html")
+    print("🚀 Starting the program...")
+    animals_data = load_json_file("animals_data.json")
+    animals_template = load_html_file("animals_template.html")
     html_content = create_html_content(animals_data)
     new_animals_template = animals_template.replace("__REPLACE_ANIMALS_INFO__", html_content)
     save_document("animals.html", new_animals_template)
+    print("✅ Program finished successfully.")
 
 
 if __name__ == "__main__":
