@@ -3,16 +3,31 @@ import json
 
 def load_data(file_path):
     """
-    Load data from a JSON file.
+    Load data from a JSON file with error handling.
 
     Args:
         file_path (str): The path to the JSON file.
 
     Returns:
-        dict: The parsed JSON data.
+        dict: The parsed JSON data if successful, otherwise None.
+
+    Raises:
+        ValueError: If the file contains invalid JSON.
     """
-    with open(file_path, "r", encoding="utf-8") as handle:
-        return json.load(handle)
+    try:
+        with open(file_path, "r", encoding="utf-8") as handle:
+            return json.load(handle)
+    except FileNotFoundError:
+        print(f"Error: The file '{file_path}' was not found.")
+    except json.JSONDecodeError as e:
+        print(f"Error: Failed to decode JSON from '{file_path}'. {e}")
+        raise ValueError("Invalid JSON format") from e
+    except PermissionError:
+        print(f"Error: Permission denied when accessing '{file_path}'.")
+    except Exception as e:
+        print(f"Unexpected error: {e}")
+
+    return None
 
 
 def get_name(animal):
@@ -25,7 +40,7 @@ def get_name(animal):
     Returns:
         str: The name of the animal.
     """
-    return animal["name"]
+    return animal.get("name", False)
 
 
 def get_diet(animal):
@@ -38,7 +53,7 @@ def get_diet(animal):
     Returns:
         str | bool: The diet of the animal if available, else False.
     """
-    return animal["characteristics"].get("diet", False)
+    return animal.get("characteristics", {}).get("diet", False)
 
 
 def get_locations(animal):
@@ -51,7 +66,7 @@ def get_locations(animal):
     Returns:
         list: List of locations.
     """
-    return animal["locations"]
+    return animal.get("locations", False)
 
 
 def get_type(animal):
@@ -64,7 +79,7 @@ def get_type(animal):
     Returns:
         str | bool: The type of the animal if available, else False.
     """
-    return animal["characteristics"].get("type", False)
+    return animal.get("characteristics", {}).get("type", False)
 
 
 def get_skin_type(animal):
@@ -76,7 +91,7 @@ def get_skin_type(animal):
     Returns:
         str | bool: The skin type of the animal if available, otherwise False.
     """
-    return animal["characteristics"].get("skin_type", False)
+    return animal.get("characteristics", {}).get("skin_type", False)
 
 
 def get_lifespan(animal):
@@ -88,7 +103,7 @@ def get_lifespan(animal):
     Returns:
         str | bool: The lifespan of the animal if available, otherwise False.
     """
-    return animal["characteristics"].get("lifespan", False)
+    return animal.get("characteristics", {}).get("lifespan", False)
 
 
 def get_color(animal):
@@ -100,7 +115,7 @@ def get_color(animal):
     Returns:
         str | bool: The color of the animal if available, otherwise False.
     """
-    return animal["characteristics"].get("color", False)
+    return animal.get("characteristics", {}).get("color", False)
 
 
 def get_predators(animal):
@@ -112,21 +127,38 @@ def get_predators(animal):
     Returns:
         list | bool: A list of predators if available, otherwise False.
     """
-    return animal["characteristics"].get("predators", False)
+    return animal.get("characteristics", {}).get("predators", False)
 
 
 def load_html(file_path):
     """
-    Load an HTML file as a string.
+    Load an HTML file as a string with error handling.
 
     Args:
         file_path (str): The path to the HTML file.
 
     Returns:
-        str: The content of the HTML file.
+        str: The content of the HTML file if successful, otherwise None.
+
+    Raises:
+        ValueError: If the file is empty.
     """
-    with open(file_path, "r", encoding="utf-8") as handle:
-        return handle.read()
+    try:
+        with open(file_path, "r", encoding="utf-8") as handle:
+            content = handle.read()
+            if not content.strip():
+                raise ValueError(f"Error: The file '{file_path}' is empty.")
+            return content
+    except FileNotFoundError:
+        print(f"Error: The file '{file_path}' was not found.")
+    except PermissionError:
+        print(f"Error: Permission denied when accessing '{file_path}'.")
+    except UnicodeDecodeError:
+        print(f"Error: Failed to decode '{file_path}'. Check the file encoding.")
+    except Exception as e:
+        print(f"Unexpected error: {e}")
+
+    return None
 
 
 def save_document(new_file_name, file_content):
@@ -154,7 +186,7 @@ def serialize_animal(animal_obj):
     animal_content = ""
     name = get_name(animal_obj)
     diet = get_diet(animal_obj)
-    locations = ", ".join(get_locations(animal_obj))
+    first_location = get_locations(animal_obj)[0]
     type_ = get_type(animal_obj)
     skin_type = get_skin_type(animal_obj)
     lifespan = get_lifespan(animal_obj)
@@ -165,7 +197,7 @@ def serialize_animal(animal_obj):
     animal_content += f'<div class="card__title">{name}</div>\n'
     animal_content += '<div class="card__text">\n'
     animal_content += '<ul>\n'
-    animal_content += f"<li><strong>Location:</strong> {locations}</li>\n"
+    animal_content += f"<li><strong>Location:</strong> {first_location}</li>\n"
     if diet:
         animal_content += f"<li><strong>Diet:</strong> {diet}</li>\n"
     if type_:
